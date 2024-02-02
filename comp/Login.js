@@ -36,34 +36,38 @@ export function Login({ navigation }) {
 
   const handleLogin = async () => {
     try {
+      // Folosește metoda GET pentru a te adresa serverului de autentificare
       const response = await fetch(
-        `http://gavrilencu.com/authorization/Token?email=${encodeURIComponent(
+        `http://192.168.0.47:3000/authentication?mail=${encodeURIComponent(
           email
         )}&password=${encodeURIComponent(password)}`
       );
-
+  
       if (!response.ok) {
         throw new Error(`Server responded with status: ${response.status}`);
       }
-
+  
       const contentType = response.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
         throw new Error(`Expected JSON response, received: ${contentType}`);
       }
-
+  
       const data = await response.json();
-      if (data.username) {
+      if (data.username && data.mail) {
         setUsername(data.username); // Setează username-ul în context
         await AsyncStorage.setItem("username", data.username);
+        // Poți, de asemenea, să salvezi token-ul pentru autentificări viitoare
+        await AsyncStorage.setItem("MyMail", data.mail);
         navigation.navigate("Home");
       } else {
-        alert("Username not received from server");
+        alert("Autentificare eșuată sau datele nu sunt complete");
       }
     } catch (error) {
       console.error("Login error", error);
       alert(`Login error: ${error.message}`);
     }
   };
+  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome Back!</Text>

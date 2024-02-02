@@ -3,11 +3,12 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
 import News from "./News";
-import Search from "./Search";
+import Message from "./Message";
 import Settings from "./Settings";
 import MyAccount from "./MyAccount";
 import { AppContext } from "./AppContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Search from "./Search.js";
 
 const Tab = createBottomTabNavigator();
 
@@ -41,12 +42,14 @@ export function Home() {
 
           if (route.name === "News") {
             iconName = "article";
-          } else if (route.name === "Search") {
-            iconName = "search";
+          } else if (route.name === "Message") {
+            iconName = "message";
           } else if (route.name === "Settings") {
             iconName = "settings";
           } else if (route.name === "MyAccount") {
             iconName = "person";
+          } else if (route.name === "Search") {
+            iconName = "search";
           }
 
           return <MaterialIcons name={iconName} size={size} color={color} />;
@@ -68,6 +71,7 @@ export function Home() {
     >
       <Tab.Screen name="News" component={News} />
       <Tab.Screen name="Search" component={Search} />
+      <Tab.Screen name="Message" component={Message} />
       <Tab.Screen name="Settings" component={Settings} />
       <Tab.Screen name="MyAccount" component={MyAccount} />
     </Tab.Navigator>

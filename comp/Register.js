@@ -1,18 +1,50 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export function Register({ navigation }) {
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
-     const registertoaccount  = async () => {
-        try {
-            const response = await fetch(
-                
-            )
+    const registertoaccount = async () => {
+        if (password !== repeatPassword) {
+          alert("Passwords do not match");
+          return;
         }
-     }
+      
+        try {
+          const response = await fetch('http://192.168.0.47:3000/authentication', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              mail: email, // Modifică "email" în "mail" pentru a corespunde cu serverul
+              username: username,
+              password: password,
+            }),
+          });
+      
+          const data = await response.json();
+          if (!response.ok) {
+            alert(`Error: ${response.status} - ${data.message}`);
+            return;
+          }
+      
+          if (data.username) {
+            await AsyncStorage.setItem('username', data.username);
+            navigation.navigate('Home');
+          } else {
+            alert("Registration failed. Server did not return a username.");
+          }
+        } catch (error) {
+          console.error("Registration error", error);
+          alert(`Registration error: ${error.message}`);
+        }
+      };
+      
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Create Account</Text>
@@ -50,9 +82,9 @@ export function Register({ navigation }) {
                 secureTextEntry
             />
 
-            <TouchableOpacity style={styles.button} onPress={() => {/* Handle register logic here */}}>
-                <Text style={styles.buttonText}>Register</Text>
-            </TouchableOpacity>
+<TouchableOpacity style={styles.button} onPress={registertoaccount}>
+  <Text style={styles.buttonText}>Register</Text>
+</TouchableOpacity>
 
             <View style={styles.loginContainer}>
                 <Text style={styles.loginText}>Already have an account?</Text>
